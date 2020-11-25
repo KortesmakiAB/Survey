@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Survey Question #{{idx}}
+{% endblock %}
+
+{% block h2 %}
+    Survey Question #{{idx+1}} of {{len(survey.questions)}}
+    <br>
+    Question: {{survey.questions[{{idx}}].question}}
+{% endblock %}  
+
+{% block content %}
+    <form action="/questions/{{idx + 1}}" method="get">
+        {% for choice in survey.questions[{{idx}}].choices %}
+        <label for="TODO">{{choice}}</label>
+        <input type="radio" name="answer" id="TODO">
+        {% endfor %}
+        <button>Submit</button>
+    </form>
+{% endblock %}  
