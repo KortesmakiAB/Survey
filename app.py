@@ -8,8 +8,6 @@ app.config['SECRET_KEY'] = "secret"
 debug = DebugToolbarExtension(app)
 
 responses = []
-idx = 1
-counter = 1
 
 @app.route('/')
 def show_homepage():
@@ -19,24 +17,26 @@ def show_homepage():
 @app.route('/questions/<int:idx>')
 def handle_questions(idx):
     """When the user arrives at one of these pages, it should show a form asking the current question, and listing the choices as radio buttons."""
-    global counter
 
-    # questions/1 doesn't have an answer, so don't inlclude "None" in responses
-    if idx > 1:
-        answer = request.args.get('answer', None)
-        responses.append(answer)
+    answer = request.args.get('answer', None)
+    responses.append(answer)
+    if None in responses:
+        responses.pop() 
 
-    # If user attempts to change url: user is unable to go backwards, user is unable to go forwards by 2 or more. But user can go forward 1.
-    # What needs to be different so that if user increments url by 1, they will be redirected back to counter.
-    path = request.path
-    if request.path == f"/questions/{counter}":
-        if idx - 1 < len(satisfaction_survey.questions):
-            idx += 1
-            counter += 1
-            return render_template('questions.html', survey=satisfaction_survey, idx=idx, path=path, counter=counter)
-        else:
-            return render_template('thank-you.html', responses=responses)
+    # from solution code
+    if len(responses) != idx:
+        # Trying to access questions out of order.
+        flash(f"Invalid question id: {idx}.")
+        return redirect(f"/questions/{len(responses)}")
+
+    if idx < len(satisfaction_survey.questions):
+        idx += 1
+        return render_template('questions.html', survey=satisfaction_survey, idx=idx, responses=responses)
     else:
-        counter -= 1
-        return redirect(f'/questions/{counter}')          
- 
+        return redirect('/thank-you')
+
+@app.route("/thank-you")
+def thank_you():
+    """Survey complete. Show Thank You page."""
+
+    return render_template("thank-you.html", responses=responses)
