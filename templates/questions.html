@@ -7,16 +7,26 @@
 {% block h2 %}
     Survey question #{{idx}} (of {{survey.questions|length()}})
     <br>
-    {{survey.questions[idx-1].question}}
+    {{survey.questions[idx - 1].question}}
 {% endblock %}  
 
 {% block content %}
-    <form action="/questions/{{idx + 1}}" method="get">
+    <form action="/questions/{{idx}}" method="get">
         {% for choice in survey.questions[idx - 1].choices %}
-        <input type="radio" name="answer" id="{{choice}}" value="{{choice}}">
+        <input type="radio" name="answer" id="{{choice}}" value="{{choice}}" required>
         <label for="{{choice}}">{{choice}}</label>
         <br>
         {% endfor %}
         <button>Submit</button>
     </form>
+    {% if get_flashed_messages() %}
+        {% for msg in get_flashed_messages() %}	 
+            <p>{{msg}}</p>
+        {% endfor %}
+    {% endif %}
+
+    <!-- <hr>
+    <h4>Info for troubleshooting:</h4>
+    <p>Responses: {{responses}}</p>
+    <p>Idx: {{idx}}</p> -->
 {% endblock %}  
