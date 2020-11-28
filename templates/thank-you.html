@@ -10,5 +10,10 @@
 
 {% block content %}
     <span>Have a nice day!</span>
-    <p>Your responses: {{responses}}</p>
+    <p>Your responses:</p>
+    <ul>
+        {% for response in responses %}
+        <li>{{response}}</li>
+        {% endfor %}
+    </ul>
 {% endblock %}  
