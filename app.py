@@ -11,8 +11,15 @@ responses = []
 
 @app.route('/')
 def show_homepage():
-    """shows the user the title of the survey, the instructions, and a button to start the survey."""
+    """shows the user the title of the survey, the instructions, and a button to 
+    fire off a POST request that will set session[“responses”] to an empty list AND start the survey."""
     return  render_template('index.html', survey=satisfaction_survey)
+
+@app.route('/', methods=['POST'])
+def show_homepage():
+    """set session[“responses”] to an empty list AND redirect to the start of the survey"""
+    session['responses'] = []
+    return  redirect('/questions/0')
 
 @app.route('/questions/<int:idx>')
 def handle_questions(idx):
